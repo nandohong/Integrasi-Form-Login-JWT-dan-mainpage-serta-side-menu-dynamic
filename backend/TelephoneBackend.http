@@ -1,0 +1,6 @@
+@TelephoneBackend_HostAddress = http://localhost:5046
+
+GET {{TelephoneBackend_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

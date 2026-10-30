@@ -1,0 +1,156 @@
+
+<div class="app-shell">
+  @if (!currentUser) {
+    <main class="login-page">
+      <section class="login-card">
+        <div class="brand">
+          <span class="brand-symbol">T</span>
+          <span class="brand-name">Telephone<span>Management</span></span>
+        </div>
+
+        <div class="login-heading">
+          <p class="section-kicker">ADMIN WORKSPACE</p>
+          <h1>Welcome back.</h1>
+          <p>Sign in to continue to your workspace.</p>
+        </div>
+
+        <form class="login-form" (ngSubmit)="login()">
+          <label for="username">Username</label>
+          <input
+            id="username"
+            name="username"
+            type="text"
+            [(ngModel)]="loginForm.username"
+            placeholder="Enter your username"
+            autocomplete="username"
+            required
+          />
+
+          <label for="password">Password</label>
+          <input
+            id="password"
+            name="password"
+            type="password"
+            [(ngModel)]="loginForm.password"
+            placeholder="Enter your password"
+            autocomplete="current-password"
+            required
+          />
+
+          @if (loginError) {
+            <p class="form-message">{{ loginError }}</p>
+          }
+
+          <button type="submit" class="primary-button" [disabled]="isLoggingIn">
+            {{ isLoggingIn ? 'Signing in…' : 'Sign in' }}
+          </button>
+        </form>
+
+        <p class="login-bottom">Telephone Management System</p>
+      </section>
+    </main>
+  } @else {
+    <div class="workspace" [class.sidebar-open]="!sidebarCollapsed">
+      <aside class="sidebar">
+        <a class="brand" routerLink="/dashboard" (click)="closeSidebarOnMobile()">
+          <span class="brand-symbol">T</span>
+          <span class="brand-name">
+            Telephone
+            <span>Management</span>
+          </span>
+        </a>
+
+        <p class="nav-heading">MENU</p>
+
+        <nav class="navigation">
+          @for (menu of parentMenus; track $index) {
+            @if (getChildren(menu).length === 0) {
+              <a
+                class="nav-link"
+                [routerLink]="getMenuRoute(menu)"
+                routerLinkActive="active"
+                [routerLinkActiveOptions]="{ exact: true }"
+                (click)="closeSidebarOnMobile()"
+              >
+                <span class="nav-symbol">{{ getMenuIcon(menu) }}</span>
+                <span>{{ getMenuName(menu) }}</span>
+              </a>
+            } @else {
+              <div class="nav-group">
+                <div class="nav-group-heading">
+                  <span class="nav-symbol">{{ getMenuIcon(menu) }}</span>
+                  <span>{{ getMenuName(menu) }}</span>
+                </div>
+
+                @for (child of getChildren(menu); track $index) {
+                  <a
+                    class="nav-link nav-child"
+                    [routerLink]="getMenuRoute(child)"
+                    routerLinkActive="active"
+                    (click)="closeSidebarOnMobile()"
+                  >
+                    <span class="nav-child-indicator"></span>
+                    <span>{{ getMenuName(child) }}</span>
+                  </a>
+                }
+              </div>
+            }
+          }
+        </nav>
+
+        <div class="sidebar-bottom">
+          <div class="account">
+            <span class="account-avatar">A</span>
+            <span class="account-details">
+              <strong>Admin</strong>
+              <small>Administrator</small>
+            </span>
+            <button
+              type="button"
+              class="logout-button"
+              (click)="logout()"
+              aria-label="Sign out"
+              title="Sign out"
+            >↗</button>
+          </div>
+        </div>
+      </aside>
+
+      <div class="main-column">
+        <header class="topbar">
+          <button
+            type="button"
+            class="menu-toggle"
+            (click)="toggleSidebar()"
+            aria-label="Toggle navigation"
+          >
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+
+          <div class="breadcrumb">
+            <span>Workspace</span>
+            <span class="breadcrumb-slash">/</span>
+            <strong>{{ pageTitle }}</strong>
+          </div>
+
+          <div class="topbar-account">
+            <span class="online-dot"></span>
+            <span>Admin</span>
+            <span class="topbar-avatar">A</span>
+          </div>
+        </header>
+
+        <main class="page-content">
+          <router-outlet />
+        </main>
+
+        <footer class="app-footer">
+          <span>Telephone Management</span>
+          <span>Admin workspace</span>
+        </footer>
+      </div>
+    </div>
+  }
+</div>
